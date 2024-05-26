@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"sort"
+)
+
 /*
 백준 2296번 건물짓기
 [문제]
@@ -19,7 +24,53 @@ ______
 첫째 줄에 건물의 개수를 나타내는 자연수 N(1 ≤ N ≤ 1,000)이 주어진다.
 다음 N개의 줄에는 건물을 지을 x, y(1 ≤ x, y ≤ 1,000,000,000) 좌표와 그 건물을 지었을 때의 이익 c(1 ≤ c ≤ 50,000)가 주어진다.
 서로 다른 두 건물이 같은 x좌표나 같은 y좌표를 가지는 경우는 없다.
+
+첫째 줄에 최대 이익을 출력한다.
+[예제입력]
+4
+1 1 2
+2 5 4
+4 6 2
+5 2 5
+[예제출력]
+9
 */
+
+type Building struct {
+	x int // x좌표
+	y int // y좌표
+	c int // 건물이익
+}
+
 func main() {
+	fmt.Println("START >>>")
+	defer fmt.Println("END >>>")
+
+	var N int
+
+	// 건물 개수 입력
+	fmt.Print("건물개수 입력 : ")
+	fmt.Scan(&N)
+
+	// 건물 좌표 입력
+	buildings := make([]Building, N)
+	fmt.Printf(">>>> %d", N)
+	for i := 0; i < N; i++ {
+		fmt.Println(fmt.Sprintf("%d번째 건물 좌표 입력", i+1))
+		var x, y, c int
+		fmt.Scan(&x, &y, &c)
+		buildings[i].x = x
+		buildings[i].y = y
+		buildings[i].c = c
+
+	}
+
+	// x를 기준으로 정렬한다.
+	sort.Slice(buildings, func(i, j int) bool {
+		return buildings[i].x < buildings[j].x
+	})
+
+	fmt.Println(N)
+	fmt.Println(&buildings)
 
 }

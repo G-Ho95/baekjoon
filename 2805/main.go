@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"sort"
+)
+
 /*
 백준 2805번 나무자르기
 [문제]
@@ -16,8 +21,64 @@ package main
 
 상근이는 환경에 매우 관심이 많기 때문에, 나무를 필요한 만큼만 집으로 가져가려고 한다.
 이때, 적어도 M미터의 나무를 집에 가져가기 위해서 절단기에 설정할 수 있는 높이의 최댓값을 구하는 프로그램을 작성하시오.
+[ 입력 ]
+첫째 줄에 나무의 수 N과 상근이가 집으로 가져가려고 하는 나무의 길이 M이 주어진다. (1 ≤ N ≤ 1,000,000, 1 ≤ M ≤ 2,000,000,000)
+둘째 줄에는 나무의 높이가 주어진다. 나무의 높이의 합은 항상 M보다 크거나 같기 때문에,
+상근이는 집에 필요한 나무를 항상 가져갈 수 있다. 높이는 1,000,000,000보다 작거나 같은 양의 정수 또는 0이다.
 
+[ 출력 ]
+적어도 M미터의 나무를 집에 가져가기 위해서 절단기에 설정할 수 있는 높이의 최댓값을 출력한다.
+
+[ 예제입력_1 ]
+4 7
+20 15 10 17
+[ 예제출력_2 ]
+15
+--
+[ 예제입력_2 ]
+5 20
+4 42 40 26 46
+[ 예제출력_2 ]
+36
 */
 func main() {
+	var N, M int // 나무수, 나무길이
+	fmt.Scan(&N, &M)
 
+	trees := make([]int, N)
+	// 입력받은 나무들
+	for i := 0; i < N; i++ {
+		fmt.Scan(&trees[i])
+	}
+
+	// 나무 오름차순 정렬
+	sort.Ints(trees)
+
+	// trees의 index
+	low, high := 0, trees[N-1]
+
+	result := 0
+	for low <= high {
+		middle := low + (high-low)/2 // trees의 중간 index
+		sum := 0                     // 나무 길이 합계
+
+		for _, cut := range trees {
+
+			if cut > trees[middle] {
+				sum += cut - trees[middle]
+			}
+		}
+
+		if sum == M {
+			result = trees[middle]
+			break
+		}
+		// 합계가 필요한 나무 길이보다 적은 경우
+		if sum < M {
+			low = middle - 1
+		} else {
+			high = middle + 1
+		}
+	}
+	fmt.Println(result)
 }
