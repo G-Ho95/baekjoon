@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"sort"
 )
 
@@ -41,14 +43,17 @@ import (
 [ 예제출력_2 ]
 36
 */
+
 func main() {
 	var N, M int // 나무수, 나무길이
 	fmt.Scan(&N, &M)
 
 	trees := make([]int, N)
 	// 입력받은 나무들
+	r := bufio.NewReader(os.Stdin)
 	for i := 0; i < N; i++ {
-		fmt.Scan(&trees[i])
+		// fmt.Scan(&trees[i])
+		fmt.Fscan(r, &trees[i])
 	}
 
 	// 나무 오름차순 정렬
@@ -58,26 +63,27 @@ func main() {
 	low, high := 0, trees[N-1]
 
 	result := 0
+	// 최소값이 최대값보다 작거나 같을 때 까지 진행
 	for low <= high {
-		middle := low + (high-low)/2 // trees의 중간 index
+		middle := low + (high-low)/2 // 절단기 높이 중간값 (최소값 + (최대값-최소값)/2)
 		sum := 0                     // 나무 길이 합계
 
 		for _, cut := range trees {
-
-			if cut > trees[middle] {
-				sum += cut - trees[middle]
+			// 나무길이가 중간값보다 클경우
+			if cut > middle {
+				// 자른길이 더하기
+				sum += cut - middle
 			}
 		}
 
-		if sum == M {
-			result = trees[middle]
-			break
-		}
-		// 합계가 필요한 나무 길이보다 적은 경우
+		// case1. 합계가 필요한 나무 길이보다 적은 경우
 		if sum < M {
-			low = middle - 1
+			// 최대값 = 중간값 - 1
+			high = middle - 1
 		} else {
-			high = middle + 1
+			// case2. 크거나 같은경우
+			result = middle  // 절단기 = 중간값
+			low = middle + 1 // 최소값 = 중간값 + 1
 		}
 	}
 	fmt.Println(result)
