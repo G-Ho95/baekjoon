@@ -43,26 +43,20 @@ type Building struct {
 }
 
 func main() {
-	fmt.Println("START >>>")
-	defer fmt.Println("END >>>")
 
 	var N int
 
 	// 건물 개수 입력
-	fmt.Print("건물개수 입력 : ")
+	//fmt.Print("건물개수 입력 : ")
 	fmt.Scan(&N)
 
 	// 건물 좌표 입력
 	buildings := make([]Building, N)
-	fmt.Printf(">>>> %d", N)
 	for i := 0; i < N; i++ {
-		fmt.Println(fmt.Sprintf("%d번째 건물 좌표 입력", i+1))
+		//fmt.Println(fmt.Sprintf("%d번째 건물 좌표 입력", i+1))
 		var x, y, c int
 		fmt.Scan(&x, &y, &c)
-		buildings[i].x = x
-		buildings[i].y = y
-		buildings[i].c = c
-
+		buildings[i] = Building{x, y, c}
 	}
 
 	// x를 기준으로 정렬한다.
@@ -70,7 +64,38 @@ func main() {
 		return buildings[i].x < buildings[j].x
 	})
 
-	fmt.Println(N)
-	fmt.Println(&buildings)
+	// dp 테이블을 초기화한다.
+	dp := make([][2]int, N)
+	for i := 0; i < N; i++ {
+		dp[i][0] = buildings[i].c // 1 or 3구간
+		dp[i][1] = buildings[i].c // 2 or 4구간
+	}
+	//fmt.Println(&dp)
 
+	result := 0 // 최대 이익
+	for i := 0; i < N; i++ {
+		for j := 0; j < i; j++ {
+			// 이전건물(j) 현재건물(i) y좌표 비교 (y좌표 증가 1/3 구간)
+			if buildings[j].y < buildings[i].y {
+				// 건물 최대 이익 갱신
+				dp[i][0] = max(dp[i][0], dp[j][0]+buildings[i].c)
+			}
+			// 이전건물(j) 현재건물(i) y좌표 비교 (y좌표 감소)
+			if buildings[j].y > buildings[i].y {
+				dp[i][1] = max(dp[i][1], dp[j][1]+buildings[i].c)
+			}
+		}
+		// 최대 이익값 비교
+		result = max(result, max(dp[i][0], dp[i][1]))
+	}
+
+	fmt.Println(result)
+
+}
+
+func max(num1, num2 int) int {
+	if num1 > num2 {
+		return num1
+	}
+	return num2
 }
